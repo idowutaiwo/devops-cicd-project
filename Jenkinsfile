@@ -28,11 +28,11 @@ pipeline {
                     sleep 5
                     curl -f http://localhost:3001/health
                 '''
+            }
 
-                post {
-                    always {
-                        sh 'docker rm -f devops-cicd-test-${BUILD_NUMBER} 2>/dev/null || true'
-                    }
+            post {
+                always {
+                    sh 'docker rm -f devops-cicd-test-${BUILD_NUMBER} 2>/dev/null || true'
                 }
             }
         }
