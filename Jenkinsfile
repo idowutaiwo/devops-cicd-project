@@ -20,5 +20,16 @@ pipeline {
                 sh 'docker build -t devops-cicd-app .'
             }
         }
+
+        stage('Docker Test') {
+            steps {
+                sh '''
+                    docker run -d -p 3001:3000 --name devops-cicd-test-${BUILD_NUMBER} devops-cicd-app
+                    sleep 5
+                    curl -f http://localhost:3001/health
+                    docker rm -f devops-cicd-test-${BUILD_NUMBER}
+                '''
+            }
+        }
     }
 }
