@@ -51,5 +51,23 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to EC2') {
+            steps {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ec2-ssh-key',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" "$SSH_USER@16.170.225.42" "
+                            aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 602167898189.dkr.ecr.eu-north-1.amazonaws.com &&
+                            docker pull 602167898189.dkr.ecr.eu-north-1.amazonaws.com/devops-cicd-app:$BUILD_NUMBER &&
+                            docker rm -f devops-cicd-app 2>/dev/null || true &&
+                            docker run -d --restart unless-stopped -p 80:3000 --name devops-cicd-app 602167898189.dkr.ecr.eu-north-1.amazonaws.com/devops-cicd-app:$BUILD_NUMBER
+                        "
+                    '''
+                }
+            }
+        }
     }
 }
