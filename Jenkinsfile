@@ -14,6 +14,13 @@ pipeline {
             }
         }
 
+        stage('Helm Validate') {
+            steps {
+                sh 'helm lint helm/devops-cicd-app'
+                sh 'helm template devops-cicd-test helm/devops-cicd-app > /tmp/helm-rendered.yaml'
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 sh 'docker build -t devops-cicd-app .'

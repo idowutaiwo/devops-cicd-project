@@ -1,0 +1,15 @@
+replicaCount: 2
+
+image:
+  repository: devops-cicd-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 3000
+  targetPort: 3000
+  nodePort: 30167
+
+containerPort: 3000
+
